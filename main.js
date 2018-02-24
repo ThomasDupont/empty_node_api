@@ -1,11 +1,10 @@
 require('dotenv').config();
 
-global.ROOT = __dirname;
 const express = require('express');
 
 const app = express();
 const CONF = require('./config/conf');
-const controllerFactory = require('./app/ControllerFactory');
+const ControllerFactory = require('./app/ControllerFactory');
 const bodyParser = require('body-parser');
 
 /**
@@ -50,7 +49,7 @@ class Main {
      * @param res The reponse event
      */
 	async render(c, m, req, res) {
-		const result = await controllerFactory.init(c, m, req);
+		const result = await ControllerFactory.init(c, m, req);
 		res.status(result.statusCode);
 		res.send(result);
 	}
