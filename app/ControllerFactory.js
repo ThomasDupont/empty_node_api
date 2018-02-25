@@ -9,8 +9,8 @@ function readRecursive(dir) {
 		if (fs.statSync(dir + file).isDirectory()) {
 			readRecursive(`${dir + file}/`);
 		} else if (file.indexOf('Controller') !== -1) {
-			file = file.split('.')[0];
-			controllers[file] = require(dir + file);
+			const fileString = file.split('.')[0];
+			controllers[fileString] = require(dir + fileString);
 		}
 	});
 }
