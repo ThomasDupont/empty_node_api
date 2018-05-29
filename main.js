@@ -37,9 +37,7 @@ class Main extends Render {
 	}
 
 	initRouter() {
-		app.get(CONF.APIURL, (req, res) => {
-			this.render('Main', 'main', req, res);
-		});
+		app.get(CONF.APIURL, this.render.bind(this, 'Main', 'main'));
 	}
 }
 

@@ -16,7 +16,7 @@ class Render {
      * @param req The request
      * @param res The reponse event
      */
-	static async render(c, m, req, res) {
+	async render(c, m, req, res) {
 		const response = await ControllerFactory.init(c, m, req);
 		res.status(response.code);
 		res.send(response.result);
