@@ -1,9 +1,8 @@
 require('dotenv').config();
-
 const express = require('express');
-
 const app = express();
-const Render = require('./app/Render');
+require('./app/ControllerFactory').launch();
+const router = require('./app/Router');
 const CONF = require('./config/conf');
 const bodyParser = require('body-parser');
 
@@ -12,9 +11,8 @@ const bodyParser = require('body-parser');
  *
  * @author Thomas Dupont
  */
-class Main extends Render {
+class Main {
 	constructor() {
-		super();
 		app.use(bodyParser.urlencoded({ extended: false }));
 		// parse application/json
 		app.use(bodyParser.json());
@@ -31,13 +29,16 @@ class Main extends Render {
 
 		this.initRouter();
 
-		app.listen(3000, () => {
-			console.log('launched');
-		});
+		app.use(CONF.APIURL, require('./app/Router').router);
+
+        app.listen(3000, () => {
+            console.log('launched');
+        })
 	}
 
 	initRouter() {
-		app.get(CONF.APIURL, this.render.bind(this, 'Main', 'main'));
+        router.add('get', '', 'Main', 'main');
+        router.add('get', '/test', 'Main', 'main');
 	}
 }
 
