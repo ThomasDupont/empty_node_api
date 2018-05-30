@@ -7,7 +7,8 @@ const Response = require('../../../app/Response');
 class MainController {
 
     /**
-	 * @Route('/', 'GET')
+	 * @Route('/main/test', 'POST')
+     * @Test()
      * @param req
      * @returns {Response}
      */

@@ -9,11 +9,10 @@ const router = require('express').Router();
 const Render = require('./Render');
 
 class Router {
-    static add(verb, route, controller, action) {
-        console.log(router)
-        router[verb](route, Render.render.bind(this, controller, action));
+    add(verb, route, controller, action) {
+        router[verb.toLowerCase()](route, Render.render.bind(this, controller, action));
     }
 }
 
-module.exports = Router;
+module.exports = new Router;
 module.exports.router = router;

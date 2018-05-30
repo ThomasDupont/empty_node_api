@@ -18,38 +18,43 @@ class DecoratorListener {
     getDecorator(dir, file, ext) {
         const method = new RegExp(/[a-z]*(?=Action)/, 'i');
         const decoratorList = Object.keys(this.decoratorInstance);
-        fs.readFile(dir + file + ext, (err, data) => {
-            let result = {
-                controller: file,
-                methods: []
-            };
-            const fullMatch = data.toString()
-                .replace(/(\r\n|\n|\r)/gm,"")
-                .split('/**');
-            fullMatch.forEach(e => {
-                let action = e.match(method);
-                if (action) {
-                    let block = {
-                        method: action.shift(),
-                        decorators : []
-                    };
-                    decoratorList.forEach(d => {
-                        let obj = {call : d, params: e.match('@'+d+'(.*?\\))').pop().match(/\'(.*?)\'/gm).map(e => e.replace(/\'/gm, ""))};
-                        this.executeDecoratorInBuild(obj, file, block.method);
+        const data = fs.readFileSync(dir + file + ext);
+        const controller = file.match('(.*)(?=Controller)').shift();
+        let result = {
+            controller,
+            methods: []
+        };
+        const fullMatch = data.toString()
+            .replace(/(\r\n|\n|\r)/gm,"")
+            .split('/**');
+        fullMatch.forEach(e => {
+            let action = e.match(method);
+            if (action) {
+                let block = {
+                    method: action.shift(),
+                    decorators : []
+                };
+                decoratorList.forEach(d => {
+                    let decoratorMatch = e.match('@'+d+'(.*?\\))');
+                    if (decoratorMatch) {
+                        let obj = {
+                            call : d,
+                            params: (decoratorMatch.pop().match(/\'(.*?)\'/gm) || []).map(e => e.replace(/\'/gm, ""))
+                        };
+                        this.executeDecoratorInBuild(obj, controller, block.method);
                         block.decorators.push(obj);
-                    });
-                    result.methods.push(block)
-                }
-            });
-            this.decoratorActions.push(result);
-            console.log(JSON.stringify(this.decoratorActions))
-        })
+                    }
+                });
+                result.methods.push(block)
+            }
+        });
+        this.decoratorActions.push(result);
     }
 
     initDecoratorList() {
-        const files = fs.readdirSync(__dirname + '/../Decorator');
+        const files = fs.readdirSync(__dirname + '/../decorator');
         files.forEach((file) => {
-            this.decoratorInstance[file.split('.').shift()] = require(__dirname + '/../Decorator/' + file);
+            this.decoratorInstance[file.split('.').shift()] = require(__dirname + '/../decorator/' + file);
         });
     }
 
@@ -60,7 +65,7 @@ class DecoratorListener {
         }
     }
 
-    executeDecoratorInCall(controller, method) {
+    executeDecoratorInCall(req, res, controller, method) {
 
     }
 }

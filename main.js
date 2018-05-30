@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const ControllerFactory = require('./app/ControllerFactory');
-const Router = require('./app/Router');
+const router = require('./app/Router');
 const Render = require('./app/Render');
 const CONF = require('./config/conf');
 const bodyParser = require('body-parser');
@@ -33,14 +33,17 @@ class Main extends Render {
 		ControllerFactory.launch();
 
 		app.use(CONF.APIURL, require('./app/Router').router);
-        app.listen(3000, () => {
-            console.log('launched');
-        });
+
+		setTimeout(function () {
+            app.listen(3000, () => {
+                console.log('launched');
+            })
+        }, 200);
 	}
 
 	initRouter() {
-		Router.add('get', '', 'Main', 'main');
-		//app.get(CONF.APIURL, this.render.bind(this, 'Main', 'main'));
+        router.add('get', '', 'Main', 'main');
+        router.add('get', '/test', 'Main', 'main');
 	}
 }
 
