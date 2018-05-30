@@ -1,9 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const ControllerFactory = require('./app/ControllerFactory');
+require('./app/ControllerFactory').launch();
 const router = require('./app/Router');
-const Render = require('./app/Render');
 const CONF = require('./config/conf');
 const bodyParser = require('body-parser');
 
@@ -12,9 +11,8 @@ const bodyParser = require('body-parser');
  *
  * @author Thomas Dupont
  */
-class Main extends Render {
+class Main {
 	constructor() {
-		super();
 		app.use(bodyParser.urlencoded({ extended: false }));
 		// parse application/json
 		app.use(bodyParser.json());
@@ -30,15 +28,12 @@ class Main extends Render {
 		});
 
 		this.initRouter();
-		ControllerFactory.launch();
 
 		app.use(CONF.APIURL, require('./app/Router').router);
 
-		setTimeout(function () {
-            app.listen(3000, () => {
-                console.log('launched');
-            })
-        }, 200);
+        app.listen(3000, () => {
+            console.log('launched');
+        })
 	}
 
 	initRouter() {
