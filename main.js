@@ -37,8 +37,7 @@ class Main {
 	}
 
 	initRouter() {
-        router.add('get', '', 'Main', 'main');
-        router.add('get', '/test', 'Main', 'main');
+        router.add('get', '/test', 'Main', 'test');
 	}
 }
 

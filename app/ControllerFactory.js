@@ -1,8 +1,7 @@
 const fs = require('fs');
-const DecoratorListener = require('./DecoratorListener');
+const decorator = require('./DecoratorListener');
 
 const controllers = {};
-const decorator = new DecoratorListener();
 
 function readRecursive(dir) {
 	const files = fs.readdirSync(dir);
@@ -25,6 +24,10 @@ class ControllerFactory {
 
 	static init(controller, method, req) {
 		return controllers[`${controller}Controller`][`${method}Action`](req);
+	}
+
+	static getDecorator() {
+		return decorator.decoratorActions;
 	}
 }
 

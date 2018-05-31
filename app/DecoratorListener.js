@@ -7,6 +7,7 @@
  */
 
 const fs = require('fs');
+const Response = require('./Response');
 
 class DecoratorListener {
 
@@ -65,9 +66,16 @@ class DecoratorListener {
         }
     }
 
-    executeDecoratorInCall(req, res, controller, method) {
-
+    executeDecoratorInCall(req, res, decorator, controller, method) {
+        const decoratorInstance = this.decoratorInstance[decorator.call];
+        if (!decoratorInstance.inBuild) {
+            let exec = decoratorInstance.execute(controller, method, req);
+            if (!exec.success) {
+                return exec;
+            }
+        }
+        return null;
     }
 }
 
-module.exports = DecoratorListener;
+module.exports = new DecoratorListener();
