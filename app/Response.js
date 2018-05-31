@@ -1,6 +1,6 @@
 
 class Response {
-	constructor(success, code, result) {
+	constructor(success, code = 200, result = {}) {
 		this.success = success;
 		this.code = code;
 		this.result = result;

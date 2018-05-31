@@ -8,6 +8,7 @@
 
 const ControllerFactory = require('./ControllerFactory');
 const DecoratorListener = require('./DecoratorListener');
+const Response = require('./Response');
 
 class Render {
 	/**
@@ -20,20 +21,23 @@ class Render {
 	static render(c, m, req, res) {
 		const decorators = ControllerFactory.getDecorator();
 
-		let affectedController = decorators.find(e => e.controller === c);
-		let affectedMethod = affectedController.methods.find(e => e.method === m);
-        if (!affectedMethod) {
-        	throw new Error('No Annotation doc found for method ' + m + '. All method must be documented');
+		const affectedController = decorators.find(e => e.controller === c);
+		const affectedMethod = affectedController.methods.find(e => e.method === m);
+		if (!affectedMethod) {
+			throw new Error(`No Annotation doc found for method ${m}. All method must be documented`);
 		}
 		for (let i = 0; i < affectedMethod.decorators.length; i += 1) {
-            let resultDecorator = DecoratorListener.executeDecoratorInCall(req, res, affectedMethod.decorators[i], c, m);
-            if (!resultDecorator.success) {
-                res.status(resultDecorator.code);
-                res.send(resultDecorator.result);
-                return;
+			const rDecorator = DecoratorListener.executeDecoratorInCall(req, affectedMethod.decorators[i], c, m);
+
+			if (!(rDecorator instanceof Response)) {
+				throw new TypeError(`The return type of ${affectedMethod.decorators[i].call}Decorator must be a instance of Response. ${typeof rDecorator} given`);
+			}
+
+			if (!rDecorator.success) {
+				return res.status(rDecorator.code).send(rDecorator.result);
 			}
 		}
-		ControllerFactory.init(c, m, req).then(response => res.status(response.code).send(response.result));
+		return ControllerFactory.init(c, m, req).then(resp => res.status(resp.code).send(resp.result));
 	}
 }
 

@@ -10,7 +10,7 @@ function readRecursive(dir) {
 			readRecursive(`${dir + file}/`);
 		} else if (file.indexOf('Controller') !== -1) {
 			const fileString = file.split('.').shift();
-            decorator.getDecorator(dir, fileString, '.js');
+			decorator.getDecorator(dir, fileString, '.js');
 			controllers[fileString] = require(dir + fileString);
 		}
 	});
@@ -18,11 +18,11 @@ function readRecursive(dir) {
 
 class ControllerFactory {
 	static launch() {
-        decorator.initDecoratorList();
-        readRecursive(`${__dirname}/../src/`);
+		decorator.initDecoratorList();
+		readRecursive(`${__dirname}/../src/`);
 	}
 
-	static init(controller, method, req) {
+	static async init(controller, method, req) {
 		return controllers[`${controller}Controller`][`${method}Action`](req);
 	}
 
