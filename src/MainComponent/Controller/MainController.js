@@ -6,7 +6,7 @@ const Response = require('../../../app/Response');
  */
 class MainController {
 	/**
-	 * @Route('/', 'POST')
+	 * @Route('/info', 'POST')
      * @Test()
 	 * @CheckInCall()
 	 *
